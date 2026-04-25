@@ -1,61 +1,40 @@
 from fastapi import FastAPI
 import pickle
-import pandas as pd
 
-app = FastAPI()
+app=FastAPI()
 
-# Load trained model
-model = pickle.load(
-open("failure_model.pkl","rb")
+model=pickle.load(
+open("model.pkl","rb")
 )
-
 
 @app.get("/")
 def home():
     return {
-        "message":"Predictive Maintenance API Running"
+      "message":"Demand Forecast API Running"
     }
 
-
-@app.post("/predict-failure")
-def predict_failure(
-machine_id:int,
-temperature:float,
-vibration:float,
-pressure:float,
-humidity:float,
-hour:int,
-day:int
+@app.post("/predict-demand")
+def predict(
+product_id:int,
+category:int,
+region:int,
+price:float,
+discount:float,
+holiday:int
 ):
 
-    # Input data
-    data = pd.DataFrame([{
-        "MachineID": machine_id,
-        "Temperature": temperature,
-        "Vibration": vibration,
-        "Pressure": pressure,
-        "Humidity": humidity,
-        "Hour": hour,
-        "Day": day
-    }])
+ data=[[
+ product_id,
+ category,
+ region,
+ price,
+ discount,
+ holiday
+ ]]
 
-    # Prediction
-    prediction = model.predict(data)[0]
+ prediction=model.predict(data)
 
-    probability = model.predict_proba(
-        data
-    )[0][1]
-
-
-    # Alert Logic
-    alert="Normal"
-
-    if probability > 0.8:
-        alert="Maintenance Alert Triggered"
-
-
-    return {
-        "Failure Prediction": int(prediction),
-        "Failure Probability": float(probability),
-        "Alert": alert
-    }
+ return {
+   "Predicted Demand":
+   float(prediction[0])
+ }
