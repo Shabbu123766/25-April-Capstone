@@ -1,11 +1,21 @@
 from fastapi import FastAPI
 import pickle
+import pandas as pd
 
 app = FastAPI()
 
+# Load trained model
 model = pickle.load(
-open("failure_model 2nd Project.pkl","rb")
+open("failure_model.pkl","rb")
 )
+
+
+@app.get("/")
+def home():
+    return {
+        "message":"Predictive Maintenance API Running"
+    }
+
 
 @app.post("/predict-failure")
 def predict_failure(
@@ -18,20 +28,22 @@ hour:int,
 day:int
 ):
 
-    data=[[
-    machine_id,
-    temperature,
-    vibration,
-    pressure,
-    humidity,
-    hour,
-    day
-    ]]
+    # Input data
+    data = pd.DataFrame([{
+        "MachineID": machine_id,
+        "Temperature": temperature,
+        "Vibration": vibration,
+        "Pressure": pressure,
+        "Humidity": humidity,
+        "Hour": hour,
+        "Day": day
+    }])
 
-    prediction=model.predict(data)[0]
+    # Prediction
+    prediction = model.predict(data)[0]
 
-    probability=model.predict_proba(
-    data
+    probability = model.predict_proba(
+        data
     )[0][1]
 
 
