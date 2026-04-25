@@ -2,9 +2,6 @@ pandas
 numpy
 scikit-learn
 fastapi
-<<<<<<< HEAD
-uvicorn
-=======
 uvicorn
 mlflow
->>>>>>> e0d719a61b087697e89fdddbfbe26ea270bd6bcf
+
